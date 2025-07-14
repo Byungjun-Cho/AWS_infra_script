@@ -25,7 +25,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           # 생성한 역할의 ARN을 여기에
-          role-to-assume: arn:aws:iam::ACCOUNT_ID:role/github-actions-lambda-deploy-role
+          role-to-assume: arn:aws:iam::473478347284:role/github-actions-lambda-deploy-role
           aws-region: ap-northeast-2
 
       - name: Zip Deployment Package
