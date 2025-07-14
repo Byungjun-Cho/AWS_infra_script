@@ -1,0 +1,38 @@
+# 워크플로우의 이름
+name: Deploy Lambda Function
+
+# 언제 이 워크플로우를 실행할지 지정
+on:
+  push:
+    branches:
+      - main
+
+# 워크플로우가 OIDC 토큰을 요청할 수 있도록 권한 부여
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 액세스 키 대신 OIDC 역할을 사용하도록 변경
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # 생성한 역할의 ARN을 여기에
+          role-to-assume: arn:aws:iam::ACCOUNT_ID:role/github-actions-lambda-deploy-role
+          aws-region: ap-northeast-2
+
+      - name: Zip Deployment Package
+        run: zip -r deployment.zip lambda_function.py run_command.sh
+
+      - name: Deploy to Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name Infra_security_function \
+            --zip-file fileb://deployment.zip
